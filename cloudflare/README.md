@@ -23,8 +23,8 @@ python cloudflare/tests/validate_migration.py
 ## Local Worker run
 
 1. Create a D1 database in the Cloudflare account.
-2. Copy `wrangler.toml.example` to `wrangler.toml` and replace the database ID with the actual D1 ID.
-3. Apply migrations locally with `npx wrangler d1 migrations apply guza-gura --local`.
-4. Start the Worker with `npx wrangler dev --local`.
+2. Copy `cloudflare/wrangler.toml.example` to `cloudflare/wrangler.toml` and replace the database ID with the actual D1 ID.
+3. Apply migrations locally with `npx wrangler --config cloudflare/wrangler.toml d1 migrations apply guza-gura --local`.
+4. Start the Worker with `npx wrangler --config cloudflare/wrangler.toml dev --local`.
 
 No database ID, Cloudflare credentials, production binding, deployment, or DNS change is included in this repository slice.
