@@ -1,6 +1,8 @@
 # Cloudflare migration — controlled implementation contract
 
-Status: architecture gate; no production resources changed.
+Status: first implementation slice committed on the migration PR; production resources remain unchanged.
+
+Implemented in `cloudflare/`: a D1 SQLite schema, FTS5 index and synchronization triggers, migration contract tests, and a read-only Worker catalogue API. The Worker exposes active categories and published listings with bounded pagination, parameterized filters, literal-token search, and no client write surface. It has not been deployed or connected to a live D1 database.
 
 ## Target runtime
 
@@ -47,8 +49,8 @@ A direct SQL copy to D1 is unsafe. D1 does not provide Supabase Auth or PostgreS
 
 - [ ] Cloudflare runtime compatibility verified against actual app routes and build output.
 - [ ] Identity, session, role and account recovery model implemented; no client role escalation.
-- [ ] D1 schema and migration tests pass locally.
-- [ ] Public catalogue exposes only published listings and active categories.
+- [x] D1 schema and migration tests pass in CI.
+- [x] Public catalogue query enforces published listings and active categories in the Worker SQL; runtime integration remains pending.
 - [ ] Seller listing writes enforce ownership and moderation state transitions.
 - [ ] Conversation/message tests enforce participant access and sender identity.
 - [ ] Order tests prove server-calculated totals, atomic stock reservation and no oversell under concurrency.
