@@ -67,6 +67,8 @@ def main():
     db.execute("UPDATE listings SET title='Updated handset' WHERE id='l1'")
     assert db.execute("SELECT count(*) FROM listings_fts WHERE listings_fts MATCH 'Updated'").fetchone()[0] == 1
     assert db.execute("SELECT count(*) FROM listings_fts WHERE listings_fts MATCH '\"Phone A\"'").fetchone()[0] == 0
+    db.execute("DELETE FROM order_items WHERE id='oi-1'")
+    db.execute("DELETE FROM orders WHERE id='ord-1'")
     db.execute("DELETE FROM listings WHERE id='l1'")
     assert db.execute("SELECT count(*) FROM listings_fts WHERE listings_fts MATCH 'Updated'").fetchone()[0] == 0
     assert db.execute("PRAGMA foreign_key_check").fetchall() == []
