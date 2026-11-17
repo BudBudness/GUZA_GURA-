@@ -163,9 +163,22 @@ CREATE TABLE IF NOT EXISTS audit_events (
 );
 
 CREATE VIRTUAL TABLE IF NOT EXISTS listings_fts USING fts5(
-  listing_id UNINDEXED,title,description,town,content='',
-  tokenize='unicode61'
+  listing_id UNINDEXED,title,description,town,tokenize='unicode61'
 );
+
+-- Keep the search index synchronized with committed listing changes.
+CREATE TRIGGER IF NOT EXISTS listings_fts_after_insert AFTER INSERT ON listings BEGIN
+  INSERT INTO listings_fts(listing_id,title,description,town)
+  VALUES(new.id,new.title,new.description,new.town);
+END;
+CREATE TRIGGER IF NOT EXISTS listings_fts_after_delete AFTER DELETE ON listings BEGIN
+  DELETE FROM listings_fts WHERE listing_id=old.id;
+END;
+CREATE TRIGGER IF NOT EXISTS listings_fts_after_update AFTER UPDATE OF title,description,town ON listings BEGIN
+  DELETE FROM listings_fts WHERE listing_id=old.id;
+  INSERT INTO listings_fts(listing_id,title,description,town)
+  VALUES(new.id,new.title,new.description,new.town);
+END;
 
 CREATE INDEX IF NOT EXISTS messages_conversation_created_idx ON messages(conversation_id,created_at);
 CREATE INDEX IF NOT EXISTS orders_buyer_created_idx ON orders(buyer_id,created_at DESC);
