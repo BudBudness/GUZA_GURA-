@@ -63,9 +63,12 @@ def main():
         """INSERT INTO listings(id,seller_id,category_id,title,slug,description,price_ugx,
            created_at,updated_at) VALUES('bad','seller-1','cat-1','Bad','bad','Short',-1,'now','now')""",
     )
-    db.execute("INSERT INTO listings_fts(listing_id,title,description,town) VALUES(?,?,?,?)",
-               ("l1", "Phone A", "tested second-hand phone", "Mbarara"))
     assert db.execute("SELECT count(*) FROM listings_fts WHERE listings_fts MATCH 'Phone'").fetchone()[0] == 1
+    db.execute("UPDATE listings SET title='Updated handset' WHERE id='l1'")
+    assert db.execute("SELECT count(*) FROM listings_fts WHERE listings_fts MATCH 'Updated'").fetchone()[0] == 1
+    assert db.execute("SELECT count(*) FROM listings_fts WHERE listings_fts MATCH 'Phone'").fetchone()[0] == 0
+    db.execute("DELETE FROM listings WHERE id='l1'")
+    assert db.execute("SELECT count(*) FROM listings_fts WHERE listings_fts MATCH 'Updated'").fetchone()[0] == 0
     assert db.execute("PRAGMA foreign_key_check").fetchall() == []
     print("GUZA GURA D1 migration: schema, constraints, generated totals, FTS5 and relationships passed")
 
